@@ -35,7 +35,7 @@ class Link:
         
     def addCar(self, Car, time):
         self.queue[Car] = time
-        print(Car, "added to", self.name+".")
+        print(Car.ID, "added to", self.node1.name+self.node2.name+".")
     
     def removeCar(self, Car):
         del self.queue[Car]
@@ -82,7 +82,7 @@ class Simulator:
                 self.links[link].queue[car] = self.links[link].queue[car] - 1
                 if self.links[link].queue[car] == 0:
                     #self.links[link].removeCar(car)
-                    print(car, "finished travelling along", link+".")
+                    print(car.ID, "finished travelling along", link+".")
  
                    
 
@@ -100,7 +100,7 @@ if __name__ == "__main__":
         sim.time_step()
         count += 1
     
-    sim.links["AB"].addCar(sim.cars["Car1"].ID, 6)
+    sim.links["AB"].addCar(sim.cars["Car1"], 6)
     
     count = 0
     while(count<6):
