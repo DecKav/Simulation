@@ -140,8 +140,8 @@ class Simulator:
                 if self.nodes[node].queue[car] == 0:
                     nodeRemove = nodeRemove.append(car)
                     print(car, "finished at", node+".")
-            for car in nodeRemove:
-                node.removeCar(car)
+            #for car in nodeRemove:
+                #node.removeCar(car)
                     
         for link in self.links:
             for car in self.links[link].queue:
