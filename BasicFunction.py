@@ -2,13 +2,23 @@
 """
 Created on Thu Apr 26 11:42:57 2018
 
-@author: decka
+A simulation for an intelligent warehouse, using cars, nodes, and links.
+
+@author: Declan Kavanagh
+@author: Samuel Bloom
+
+Next: different node types, automatic car change, jobs, car attributes, charge node/battery model, payload
+
 """
 
 import math
 
 class Node:
-    
+    """ Represents a node in a warehouse that cars need to move between. 
+    Attributes:
+        Name
+        Location [x,y]
+    """
     def __init__(self, name, x, y):
         self.name = name
         self.xPos = x
@@ -22,9 +32,47 @@ class Node:
     def removeCar(self, Car):
         del self.queue[Car]
         
-        
-class Link:
+class Goods(Node):
+    """ Represents a node in a warehouse that cars will retrieve and store goods at. 
+    Inherits from Node.
+    Attributes:
+        Goods
+        Car Queue
+    """
+    def __init__(self, name, x, y):
+        Node.__init__(self, name, x, y)
+
+class Picker(Node):
+    """ Represents a node in a warehouse that cars will transport goods to. 
+    Inherits from Node.
+    Attriubutes:
+        Working Order
+        Car Queue
+    """
+    def __init__(self, name, x, y):
+        Node.__init__(self, name, x, y)
+
+class Charger(Node):
+    """ Represents a node in a warehouse that cars will be charged at. 
+    Inherits from Node.
+    Attributes:
+        Charge Rate
+        Car Queue
+    """
+    def __init__(self, name, x, y):
+        Node.__init__(self, name, x, y)
+
+class Task:
     
+    def __init__():
+        pass
+      
+class Link:
+    """ Represents a link between nodes that cars will travel along. 
+    Attributes:
+        Connected Nodes
+        Travel Distance/Time
+    """
     def __init__(self, node1, node2):
         self.node1 = node1
         self.node2 = node2
@@ -35,14 +83,20 @@ class Link:
         
     def addCar(self, Car, time):
         self.queue[Car] = time
-        print(Car, "added to", self.name+".")
+        print(Car.ID, "added to", self.node1.name+self.node2.name+".")
     
     def removeCar(self, Car):
         del self.queue[Car]
 
         
 class Car:
-    
+    """ Represents a car in the warehouse that will travel between nodes along links. 
+    Attributes:
+        Number (ID)
+        Current Charge
+        Current Location/Direction
+        Current State 
+    """
     def __init__(self, ID):
         self.ID = ID
         self.state = 0
@@ -50,7 +104,13 @@ class Car:
     
 
 class Simulator:
+    """ Controls all nodes, links, and cars. Advances time, manages job list.  
     
+    Attributes:
+        Node list
+        Link list
+        Car list    
+    """
     def __init__(self):
         self.nodes = {}
         self.cars = {}
@@ -82,14 +142,14 @@ class Simulator:
                 self.links[link].queue[car] = self.links[link].queue[car] - 1
                 if self.links[link].queue[car] == 0:
                     #self.links[link].removeCar(car)
-                    print(car, "finished travelling along", link+".")
+                    print(car.ID, "finished travelling along", link+".")
  
                    
 
 if __name__ == "__main__":
     sim = Simulator()
     sim.addNode("nodeA", 1, 1)
-    sim.addNode("nodeB", 2, 2)
+    sim.addNode("nodeB", 2, 1)
     sim.addCar("Car1")
     sim.addLink("AB", sim.nodes["nodeA"], sim.nodes["nodeB"])
     
@@ -100,7 +160,7 @@ if __name__ == "__main__":
         sim.time_step()
         count += 1
     
-    sim.links["AB"].addCar(sim.cars["Car1"].ID, 6)
+    sim.links["AB"].addCar(sim.cars["Car1"], 6)
     
     count = 0
     while(count<6):

@@ -69,8 +69,8 @@ class Simulator(carts, nodes, orders):
 # Backlog of orders
 # Total time expected
 
-        def get_carts
-        def get_nodes
+   def get_carts
+   def get_nodes
 	def get_orders
 
 	def setup_graph #Set up the graph with nodes, links and carts
