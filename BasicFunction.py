@@ -8,6 +8,7 @@ A simulation for an intelligent warehouse, using cars, nodes, and links.
 @author: Samuel Bloom
 
 Next: different node types, automatic car change, jobs, car attributes, charge node/battery model, payload
+Add order tracker: [#, node list, completed]
 
 """
 
@@ -136,7 +137,8 @@ class Simulator:
         self.tasks = {}
     
     def addNode(self, name, x, y):
-        self.nodes[name] = Node(name,x,y)
+        nodeAdd = Node(name,x,y)
+        self.nodes[nodeAdd.name] = nodeAdd
         print(name, "created.")
     
     def addCar(self, ID):
@@ -165,13 +167,14 @@ class Simulator:
                 self.nodes[node].queue[car] = self.nodes[node].queue[car] - 1
                 #Check for cars finishing
                 if self.nodes[node].queue[car] == 0:
-                    nodeRemove = nodeRemove.append(car)
+                    nodeRemove.append(car)
                     print(car.ID, "finished at", node+".")
+
             #Remove finished cars
             if nodeRemove:
                 for car in nodeRemove:
                     print(car.ID, "removed from", node+".")
-                    node.removeCar(car)
+                    self.nodes[node].removeCar(car)
                     car.state = 2
         
         #Increment cars in links            
@@ -181,26 +184,28 @@ class Simulator:
                 self.links[link].queue[car] = self.links[link].queue[car] - 1
                 #Check for cars finishing
                 if self.links[link].queue[car] == 0:
-                    linkRemove = linkRemove.append(car)
+                    linkRemove.append(car)
                     print(car.ID, "finished travelling along", link+".")
+            
             #Remove finished cars
             if linkRemove:
                 for car in linkRemove:
-                    link.removeCar(car)
+                    print(car.ID, "removed from", link+".")
+                    self.links[link].removeCar(car)
                     car.state = 3
         
        #Move cars onto next state in task             
-        for car in sim.cars:
+        for car in self.cars:
             if self.cars[car].state == 2:
                 #Progress from node to link
-                sim.links["AB"].addCar(car,6)
+                sim.links["AB"].addCar(self.cars[car],6)
                 self.cars[car].state = 1
                 
             if self.cars[car].state == 3:
                 #Progress from link to node
-                #Dependent on path assigned
-                sim.nodes[self.cars[car].task.finish.name].addCar(car,6)
+                sim.nodes[self.cars[car].task.finish.name].addCar(self.cars[car],6)
                 self.cars[car].state = 1 
+
 
 if __name__ == "__main__":
     sim = Simulator()
