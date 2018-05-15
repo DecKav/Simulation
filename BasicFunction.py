@@ -134,7 +134,7 @@ class Car:
         
 
 class OrderTracker:
-    """ A class which keeps track of the progress of all current tasks
+    """ A class which keeps track of the progress of all current tasks.
     Attributes:
         Current tasks
         Completed tasks
@@ -273,29 +273,5 @@ if __name__ == "__main__":
         
         sim.time_step()
         count = count + 1
-        
-                
-                
-        
-    """
-    sim.nodes["nodeA"].addCar(sim.cars["Car1"].ID, 6)
     
-    count = 0
-    while(count<6):
-        sim.time_step()
-        count += 1
-    
-    sim.links["AB"].addCar(sim.cars["Car1"], 6)
-    
-    count = 0
-    while(count<6):
-        sim.time_step()
-        count += 1
-    
-    sim.nodes["nodeB"].addCar(sim.cars["Car1"].ID, 6)
-    count = 0
-    while(count<6):
-        sim.time_step()
-        count += 1
-    """
 
