@@ -1,11 +1,12 @@
 clc, clear all, close all;
 hold on;
 axis([0, 60, 0, 20])
+axis off
 
 pick1 = scatter(10, 5, 400, 'g', 'MarkerFaceColor', 'g');
 goods = scatter(10000, 100000, 400, 'r', 'MarkerFaceColor', 'r');
 goods1 = rectangle('Position', [27.5, 3.75, 5, 2.5], 'EdgeColor', 'k', 'FaceColor', 'r');
-charge1 = scatter(10, 15, 400, 'c', 'MarkerFaceColor', 'c');
+charge1 = scatter(10, 10, 400, 'c', 'MarkerFaceColor', 'c');
 car = scatter(1000, 1000, 50, 'k', 'MarkerFaceColor', 'k');
 
 pick2 = scatter(10, 7.5, 400, 'g', 'MarkerFaceColor', 'g');
@@ -34,12 +35,12 @@ y2 = y1(end) + 0*t2;
 
 t3 = linspace(10,30);
 x3 = t3;
-y3 = y2(end) + 0*t2;
+y3 = y1(end) + 0*t2;
 
 %(30, 5) -> (10, 15)
 t4 = linspace(30, 10);
 x4 = t4;
-y4 = t3/2;
+y4 = linspace(15,30)/3;
 
 legend('Pickers', 'Goods', 'Charger', 'Car')
 status = 'Moving to goods';
@@ -52,7 +53,7 @@ for k = 1:length(t1)
     % Refresh the plot
     message = text(x1(k)-5, y1(k)+1, status);
     drawnow
-    pause(0.002)
+    %pause(0.002)
     delete(message)
 end
 
@@ -75,7 +76,7 @@ for k = 1:length(t2)
     % Refresh the plot
     message = text(x2(k)-5, y2(k)+1, status);
     drawnow
-    pause(0.001)
+    %pause(0.001)
     delete(message)
 end
 
@@ -93,7 +94,7 @@ for k = 1:length(t3)
     % Refresh the plot
     message = text(x3(k)-5, y3(k)+1, status);
     drawnow
-    pause(0.001)
+    %pause(0.001)
     delete(message)
 end
 
