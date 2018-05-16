@@ -3,17 +3,24 @@ hold on;
 axis([0, 60, 0, 20])
 
 pick1 = scatter(10, 5, 400, 'g', 'MarkerFaceColor', 'g');
-goods1 = scatter(30, 5, 400, 'r', 'MarkerFaceColor', 'r');
+goods = scatter(10000, 100000, 400, 'r', 'MarkerFaceColor', 'r');
+goods1 = rectangle('Position', [27.5, 3.75, 5, 2.5], 'EdgeColor', 'k', 'FaceColor', 'r');
 charge1 = scatter(10, 15, 400, 'c', 'MarkerFaceColor', 'c');
 car = scatter(1000, 1000, 50, 'k', 'MarkerFaceColor', 'k');
 
-pick2 = scatter(10, 10, 400, 'g', 'MarkerFaceColor', 'g');
+pick2 = scatter(10, 7.5, 400, 'g', 'MarkerFaceColor', 'g');
 
-goods2 = scatter(30, 10, 400, 'r', 'MarkerFaceColor', 'r');
-goods3 = scatter(40, 5, 400, 'r', 'MarkerFaceColor', 'r');
-goods4 = scatter(40, 10, 400, 'r', 'MarkerFaceColor', 'r');
-goods5 = scatter(50, 5, 400, 'r', 'MarkerFaceColor', 'r');
-goods6 = scatter(50, 10, 400, 'r', 'MarkerFaceColor', 'r');
+% goods2 = scatter(30, 10, 400, 'r', 'MarkerFaceColor', 'r');
+% goods3 = scatter(40, 5, 400, 'r', 'MarkerFaceColor', 'r');
+% goods4 = scatter(40, 10, 400, 'r', 'MarkerFaceColor', 'r');
+% goods5 = scatter(50, 5, 400, 'r', 'MarkerFaceColor', 'r');
+% goods6 = scatter(50, 10, 400, 'r', 'MarkerFaceColor', 'r');
+
+goods2 = rectangle('Position', [27.5, 6.25, 5, 2.5], 'EdgeColor', 'k', 'FaceColor', 'r');
+goods3 = rectangle('Position', [32.5, 3.75, 5, 2.5], 'EdgeColor', 'k', 'FaceColor', 'r');
+goods4 = rectangle('Position', [32.5, 6.25, 5, 2.5], 'EdgeColor', 'k', 'FaceColor', 'r');
+goods5 = rectangle('Position', [37.5, 3.75, 5, 2.5], 'EdgeColor', 'k', 'FaceColor', 'r');
+goods6 = rectangle('Position', [37.5, 6.25, 5, 2.5], 'EdgeColor', 'k', 'FaceColor', 'r');
 
 car1 = scatter(1, 1, 50, 'k', 'MarkerFaceColor', 'k');
 
@@ -54,6 +61,9 @@ status = 'Collecting goods';
 message = text(x1(k)-5, y1(k)+1, status);
 drawnow
 pause(1)
+%goods1 = rectangle('Position', [27.5, 3.75, 5, 2.5], 'EdgeColor', 'k');
+set(goods1, 'FaceColor', 'w')
+set(car1, 'MarkerFaceColor', 'r')
 status = 'Transporting goods';
 
 for k = 1:length(t2)
@@ -91,6 +101,8 @@ status = 'Returning goods';
 message = text(x3(k)-5, y3(k)+1, status);
 pause(1)
 delete(message)
+set(goods1, 'FaceColor', 'r')
+set(car1, 'MarkerFaceColor', 'k')
 status = 'Move to charge';
 
 for k = 1:length(t4)

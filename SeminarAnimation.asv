@@ -9,11 +9,17 @@ car = scatter(1000, 1000, 50, 'k', 'MarkerFaceColor', 'k');
 
 pick2 = scatter(10, 10, 400, 'g', 'MarkerFaceColor', 'g');
 
-goods2 = scatter(30, 10, 400, 'r', 'MarkerFaceColor', 'r');
-goods3 = scatter(40, 5, 400, 'r', 'MarkerFaceColor', 'r');
-goods4 = scatter(40, 10, 400, 'r', 'MarkerFaceColor', 'r');
-goods5 = scatter(50, 5, 400, 'r', 'MarkerFaceColor', 'r');
-goods6 = scatter(50, 10, 400, 'r', 'MarkerFaceColor', 'r');
+% goods2 = scatter(30, 10, 400, 'r', 'MarkerFaceColor', 'r');
+% goods3 = scatter(40, 5, 400, 'r', 'MarkerFaceColor', 'r');
+% goods4 = scatter(40, 10, 400, 'r', 'MarkerFaceColor', 'r');
+% goods5 = scatter(50, 5, 400, 'r', 'MarkerFaceColor', 'r');
+% goods6 = scatter(50, 10, 400, 'r', 'MarkerFaceColor', 'r');
+
+goods2 = rectangle([30, 10, 5, 5], 'EdgeColor', 'r');
+goods3 = rectangle([40, 5, 5, 5], 'EdgeColor', 'r');
+goods4 = rectangle([40, 10, 400, 'EdgeColor', 'r');
+goods5 = rectangle(50, 5, 400, 'EdgeColor', 'r');
+goods6 = rectangle(50, 10, 400, 'EdgeColor', 'r');
 
 car1 = scatter(1, 1, 50, 'k', 'MarkerFaceColor', 'k');
 
@@ -43,7 +49,7 @@ for k = 1:length(t1)
                   'YData', y1(k))        % Set the Y Position of the circle to y(k)
 
     % Refresh the plot
-    message = text(x1(k)-4, y1(k)+1, status);
+    message = text(x1(k)-5, y1(k)+1, status);
     drawnow
     pause(0.002)
     delete(message)
@@ -51,21 +57,29 @@ end
 
 delete(message)
 status = 'Collecting goods';
-message = text(x1(k)-4, y1(k)+1, status);
+message = text(x1(k)-5, y1(k)+1, status);
 drawnow
 pause(1)
+status = 'Transporting goods';
 
 for k = 1:length(t2)
+    delete(message)
     % Update the location of the scatter plot
     set(car1, 'XData', x2(k), ...    % Set the X Position of the circle to x(k)
                   'YData', y2(k))        % Set the Y Position of the circle to y(k)
 
     % Refresh the plot
+    message = text(x2(k)-5, y2(k)+1, status);
     drawnow
     pause(0.001)
+    delete(message)
 end
 
+status = 'Waiting for picking';
+message = text(x2(k)-5, y2(k)+1, status);
 pause(1)
+delete(message)
+status = 'Transporting goods';
 
 for k = 1:length(t3)
     % Update the location of the scatter plot
@@ -73,11 +87,17 @@ for k = 1:length(t3)
                   'YData', y3(k))        % Set the Y Position of the circle to y(k)
 
     % Refresh the plot
+    message = text(x3(k)-5, y3(k)+1, status);
     drawnow
     pause(0.001)
+    delete(message)
 end
 
+status = 'Returning goods';
+message = text(x3(k)-5, y3(k)+1, status);
 pause(1)
+delete(message)
+status = 'Move to charge';
 
 for k = 1:length(t4)
     % Update the location of the scatter plot
@@ -85,6 +105,11 @@ for k = 1:length(t4)
                   'YData', y4(k))        % Set the Y Position of the circle to y(k)
 
     % Refresh the plot
+    message = text(x4(k)-5, y4(k)+1, status);
     drawnow
     pause(0.002)
+    delete(message)
 end
+
+status = 'Charging';
+message = text(x4(k)-3, y4(k)+1, status);
