@@ -20,11 +20,11 @@ class Node:
 
     def addCar(self, Car):
         self.queue[Car] = Car.getCurrentNodeTime()
-        print("Car", Car.getID(), "added to", self.ID+".")
+        print("Car", Car.getID(), "added to Node", self.ID+".")
 
     def removeCar(self, Car):
         del self.queue[Car]
-        print("Car", Car.getID(), "removed from", self.ID+".")
+        print("Car", Car.getID(), "removed from Node", self.ID+".")
 
     def getID(self):
         return self.ID

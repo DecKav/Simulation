@@ -12,7 +12,6 @@ from collections import OrderedDict
 from Simulator import Simulator
 
 if __name__ == "__main__":
-    
     print("Initialisation:")
     print("")
     sim = Simulator()

@@ -65,12 +65,6 @@ class Car:
     
     def moveToward(self, node):
         goalx, goaly = node.getPos()
-
-#        if (self.x == goalx) & (self.y == goaly):
-#            #Already at node
-#            self.state = 3
-#            print("Car", self.ID, "is already at Node", node.getID()+".")
-            
         if (abs(self.x - goalx) > abs(self.y - goaly)):
             #Move in x dimension, further to go
             if(self.x > goalx):
@@ -103,3 +97,36 @@ class Car:
             self.state = 3
             print("Car", self.ID, "is now at Node", node.getID()+".")
             node.addCar(self)
+            
+    def moveTowardPoint(self, goalx, goaly):
+        if (self.x == goalx) & (self.y == goaly):
+            #Now at node
+            self.state = 1
+            print("Car", self.ID, "idling at", str(goalx)+",", str(goaly)+".")
+            
+        if (abs(self.x - goalx) > abs(self.y - goaly)):
+            #Move in x dimension, further to go
+            if(self.x > goalx):
+                self.setLocation(self.x - 1, self.y)
+                print("Car", self.ID, "moved left. New position:", self.getLocation())
+            if(self.x < goalx):
+                self.setLocation(self.x + 1, self.y)
+                print("Car", self.ID, "moved right. New position:", self.getLocation())
+                
+        elif (abs(self.x - goalx) < abs(self.y - goaly)):
+            #Move in y dimension, further to go
+            if(self.y > goaly):
+                self.setLocation(self.x, self.y - 1)
+                print("Car", self.ID, "moved down. New position:", self.getLocation())
+            if(self.y < goaly):
+                self.setLocation(self.x, self.y + 1)
+                print("Car", self.ID, "moved up. New position:", self.getLocation())
+                
+        elif (abs(self.x - goalx) == abs(self.y - goaly)):
+            #Even distance, move x
+            if(self.x > goalx):
+                self.setLocation(self.x - 1, self.y)
+                print("Car", self.ID, "moved left. New position:", self.getLocation())
+            if(self.x < goalx):
+                self.setLocation(self.x + 1, self.y)
+                print("Car", self.ID, "moved right. New position:", self.getLocation())

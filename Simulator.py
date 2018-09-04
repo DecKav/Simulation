@@ -14,9 +14,9 @@ class Simulator:
 
     Attributes:
         Node list
-        Link list
         Car list
         Task list
+        Time steps taken
     """
     def __init__(self):
         self.nodes = {}
@@ -38,7 +38,10 @@ class Simulator:
         taskAdd = Task(ID, nodes)
         self.tasks[taskAdd.getID()] = taskAdd
         print("Job number", taskAdd.getID(), "created.")
-        self.cars[carID].addTask(taskAdd)
+        for car in self.cars:
+            if self.cars[car].state == 1:
+                self.cars[car].addTask(taskAdd)
+        #Need to catch if task not given    
         
 
     def timeStep(self):
@@ -56,7 +59,7 @@ class Simulator:
                     #Remove from queue
                     carClear.append(car)
                 else:
-                    print("Car", car.getID(), "is at", currentNode.getID(), "for", currentNode.queue[car], "more time steps.")
+                    print("Car", car.getID(), "is at Node", currentNode.getID(), "for", currentNode.queue[car], "more time steps.")
             if carClear:
                 for car in carClear:
                     self.nodes[node].removeCar(car)
@@ -69,10 +72,12 @@ class Simulator:
             if currentCar.state == 0: # If car state is 'charging'
                 pass
             elif currentCar.state == 1: # If car state is 'idling'
-                pass
+                currentCar.moveTowardPoint(0, 0)
             elif currentCar.state == 2: # If car state is 'moving'
-                currentCar.moveToward(self.nodes[currentCar.getCurrentNodeID()])    
+                currentCar.moveToward(self.nodes[currentCar.getCurrentNodeID()])
             elif currentCar.state == 3: # If car state is 'at node'
                 pass
-                    
+               
+        
+        
         print("\n")
