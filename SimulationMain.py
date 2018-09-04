@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-A simulation for an intelligent warehouse, using cars, nodes, and links.
+A simulation for an intelligent warehouse, using cars, nodes, and a parent simulator.
 
 
 @author: Declan Kavanagh
@@ -23,16 +23,18 @@ class Node:
 
     def addCar(self, Car, time):
         self.queue[Car] = time
-        print(Car.ID, "added to", self.ID+".")
+        print("Car", Car.getID(), "added to", self.ID+".")
 
     def removeCar(self, Car):
         del self.queue[Car]
+        print("Car", Car.getID(), "removed from", self.ID+".")
 
     def getID(self):
         return self.ID
 
     def getPos(self):
         return self.x, self.y
+
 
 
 class Goods(Node):
@@ -109,11 +111,13 @@ class Car:
         self.ID = ID
         self.state = 1
         self.task = None
+        self.currentNode = None
         self.x = 0
         self.y = 0
 
     def addTask(self, task):
         self.task = task
+        self.currentNode = task.start
         self.state = 2
 
     def getID(self):
@@ -125,6 +129,9 @@ class Car:
     def setLocation(self, xNew, yNew):
         self.x = xNew
         self.y = yNew
+    
+    def progressTask(self):
+        pass
     
     def moveToward(self, node):
         goalx, goaly = node.getPos()
@@ -165,6 +172,7 @@ class Car:
             #Now at node
             self.state = 3
             print("Car", self.ID, "is now at Node", node.getID()+".")
+            node.addCar(self, 1)
 
 
 class Simulator:
@@ -201,18 +209,36 @@ class Simulator:
     def timeStep(self):
         self.time = self.time + 1
         print("Step Number:", self.time)
+        
         # Iterate through every car
         for car in self.cars:
-            current = self.cars[car]
-            if current.state == 0: # If car state is 'charging'
+            currentCar = self.cars[car]
+            if currentCar.state == 0: # If car state is 'charging'
                 pass
-            elif current.state == 1: # If car state is 'idling'
+            elif currentCar.state == 1: # If car state is 'idling'
                 pass
-            elif current.state == 2: # If car state is 'moving'
-                current.moveToward(current.task.start)
-                
-            elif current.state == 3: # If car state is 'at node'
+            elif currentCar.state == 2: # If car state is 'moving'
+                currentCar.moveToward(currentCar.currentNode)    
+            elif currentCar.state == 3: # If car state is 'at node'
                 pass
+        
+        #Iterate through all node queues
+        for node in self.nodes:
+            carClear = []
+            currentNode = self.nodes[node]
+            for car in self.nodes[node].queue: #Decrease time of each car at node
+                currentNode.queue[car] = currentNode.queue[car] - 1
+                if self.nodes[node].queue[car] == 0:
+                    #Remove from queue
+                    carClear.append(car)
+            if carClear:
+                for car in carClear:
+                    self.nodes[node].removeCar(car)
+                    car.state = 2
+                    car.currentNode = car.task.finish
+                    
+            
+            
         print("\n")
 
 
@@ -226,9 +252,8 @@ if __name__ == "__main__":
         
         
     
-    
     count = 0
-    while(count<20):
+    while(count<5):
 
         sim.timeStep()
         count = count + 1

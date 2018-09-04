@@ -2,7 +2,7 @@
 """
 Created on Thu Apr 26 11:42:57 2018
 
-A simulation for an intelligent warehouse, using cars, nodes, and links.
+A simulation for an intelligent warehouse, using cars, nodes, and a parent simulator.
 
 @author: Declan Kavanagh
 @author: Samuel Bloom
@@ -190,7 +190,6 @@ class Simulator:
 
 
     def time_step(self):
-        linkRemove = []
         nodeRemove = []
 
         #Increments cars in nodes, and update tasks
