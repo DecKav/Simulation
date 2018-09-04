@@ -8,6 +8,8 @@ A simulation for an intelligent warehouse, using cars, nodes, and a parent simul
 
 """
 
+from collections import OrderedDict
+
 class Node:
     """ Represents a node in a warehouse that cars need to move between.
     Attributes:
@@ -77,10 +79,9 @@ class Task:
         Start and finish nodes
         Deadline time to be completed by
     """
-    def __init__(self, ID, node1, node2, deadline):
+    def __init__(self, ID, nodes, deadline):
         self.ID = ID
-        self.start = node1
-        self.finish = node2
+        self.nodes = OrderedDict(nodes)
         self.deadline = deadline
 
     def getStart(self):
@@ -117,7 +118,7 @@ class Car:
 
     def addTask(self, task):
         self.task = task
-        self.currentNode = task.start
+        self.currentNode = list(task.nodes.items())[0] #Gives (ID, queue)
         self.state = 2
 
     def getID(self):
@@ -200,8 +201,8 @@ class Simulator:
         self.cars[carAdd.getID()] = carAdd
         print("Car", carAdd.getID(), "created.")
 
-    def addTask(self, ID, node1ID, node2ID, duration, carID):
-        taskAdd = Task(ID, self.nodes[node1ID], self.nodes[node2ID], duration)
+    def addTask(self, ID, nodes, duration, carID):
+        taskAdd = Task(ID, nodes, duration)
         self.tasks[taskAdd.getID()] = taskAdd
         self.cars[carID].addTask(taskAdd)
         print("Job number", taskAdd.getID(), "created.")
@@ -248,7 +249,10 @@ if __name__ == "__main__":
     sim.addNode(1, 1)
     sim.addNode(2, 2)
     sim.addCar(1)
-    sim.addTask(1, "11", "22", 5, 1)
+    taskNodes = OrderedDict()
+    taskNodes["11"] = 2
+    taskNodes["22"] = 1
+    sim.addTask(1, taskNodes, 5, 1)
         
         
     
