@@ -2,7 +2,7 @@
 """
 Created on Tue Sep  4 18:52:32 2018
 
-@author: decka
+@author: Declan Kavanagh
 """
 
 class Node:
@@ -18,8 +18,8 @@ class Node:
         self.y = y
         self.queue = {}
 
-    def addCar(self, Car, time):
-        self.queue[Car] = time
+    def addCar(self, Car):
+        self.queue[Car] = Car.getCurrentNodeTime()
         print("Car", Car.getID(), "added to", self.ID+".")
 
     def removeCar(self, Car):

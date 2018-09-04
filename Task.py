@@ -2,7 +2,7 @@
 """
 Created on Tue Sep  4 18:53:01 2018
 
-@author: decka
+@author: Declan Kavanagh
 """
 
 from collections import OrderedDict
@@ -14,10 +14,9 @@ class Task:
         Start and finish nodes
         Deadline time to be completed by
     """
-    def __init__(self, ID, nodes, deadline):
+    def __init__(self, ID, nodes):
         self.ID = ID
         self.nodes = OrderedDict(nodes)
-        self.deadline = deadline
 
     def getStart(self):
         return self.start
