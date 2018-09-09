@@ -50,7 +50,7 @@ class Car:
     def clearTask(self):
         self.task = None
         self.state = 1
-        print("Car", self.getID(), "is now idling.")
+        print("Car", self.getID(), "is now idle.")
     
     def setLocation(self, xNew, yNew):
         self.x = xNew
@@ -62,6 +62,9 @@ class Car:
         else: 
             print("Car", self.getID(), "has finished Task", str(self.task.getID())+".")
             self.clearTask()
+    
+    def validPoint(self, x, y):
+        pass
     
     def moveToward(self, node):
         goalx, goaly = node.getPos()

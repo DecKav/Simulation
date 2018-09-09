@@ -11,18 +11,11 @@ class Task:
     """ Represents a warehouse job.
     Attributes:
         Task ID
-        Start and finish nodes
-        Deadline time to be completed by
+        Node list
     """
     def __init__(self, ID, nodes):
         self.ID = ID
         self.nodes = OrderedDict(nodes)
-
-    def getStart(self):
-        return self.start
-
-    def getFinish(self):
-        return self.finish
 
     def getID(self):
         return self.ID
