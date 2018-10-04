@@ -50,12 +50,12 @@ if __name__ == "__main__":
     sim.addCharger(2,2)
     
     sim.addCar(1)
-    #sim.addCar(2)
+    sim.addCar(2)
     
     taskNodes1 = OrderedDict()
     taskNodes1["31"] = 4
-    taskNodes1["11"] = 3
-    taskNodes1["31"] = 2
+    taskNodes1["11"] = 2
+    taskNodes1["31"] = 3
     
     sim.addTask(taskNodes1)
     

@@ -53,12 +53,14 @@ class Simulator:
 
     def timeStep(self):
         self.time = self.time + 1
-        print("Step Number:", self.time)
+        print("Step Number:", self.time)   
+        print("======")
         
-        
+        self.totalEnergy = 0
         
         #Iterate through idling cars
         for car in self.cars:
+            self.totalEnergy = self.totalEnergy + self.cars[car].getCharge()
             if self.cars[car].state == 1:
                 if (self.tasks) and (self.cars[car].getCharge() > 25):
                     self.cars[car].addTask(self.tasks.popitem(False)[1])
@@ -108,7 +110,17 @@ class Simulator:
             print("Car "+str(currentCar.getID())+" Charge: "+str(currentCar.getCharge())+"%")
             
         ##Change in energy
+        print("======")
+        delta = 0
+        for car in self.cars:
+            delta = delta + self.cars[car].getCharge()
         
+        deltaE = delta - self.totalEnergy 
+        print("Total Energy at start:", str(self.totalEnergy))
+        print("Average Energy at start:", str(self.totalEnergy/len(self.cars)))
+        print("Energy Change in this step:", str(deltaE))
+        
+        self.totalEnergy = delta
                
         
         
