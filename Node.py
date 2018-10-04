@@ -65,3 +65,9 @@ class Charger(Node):
     """
     def __init__(self, x, y):
         Node.__init__(self, x, y)
+        self.rate = 10;
+    
+    def addCar(self, Car):
+        self.queue[Car] = (100 - Car.getCharge())/self.rate
+        print("Car", Car.getID(), "added to Charger", self.ID+". Requires "+str(self.queue[Car])+" time steps.")
+    

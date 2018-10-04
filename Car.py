@@ -27,6 +27,7 @@ class Car:
         self.currentNode = None
         self.x = 0
         self.y = 0
+        self.charge = 100;
         
     def getID(self):
         return self.ID
@@ -39,6 +40,18 @@ class Car:
     
     def getCurrentNodeTime(self):
         return self.currentNodeTime
+    
+    def getCharge(self):
+        return self.charge
+    
+    def changeCharge(self, change):
+        if((self.charge + change) > 100):
+            self.charge = 100
+            print("Car", self.getID(), "is now at full charge.")
+        else:
+            self.charge = self.charge + change;
+            print("Car", self.getID(), "is now at "+str(self.charge)+"%", "charge.")
+        return self.charge
 
     def addTask(self, task):
         self.taskStep = 0
@@ -50,7 +63,6 @@ class Car:
     def clearTask(self):
         self.task = None
         self.state = 1
-        print("Car", self.getID(), "is now idle.")
     
     def setLocation(self, xNew, yNew):
         self.x = xNew
@@ -101,11 +113,52 @@ class Car:
             print("Car", self.ID, "is now at Node", node.getID()+".")
             node.addCar(self)
             
+    def moveTowardCharge(self, node):
+        goalx, goaly = node.getPos()
+        if (self.x == goalx) & (self.y == goaly):
+            self.state = 0
+            return True
+        
+        if (abs(self.x - goalx) > abs(self.y - goaly)):
+            #Move in x dimension, further to go
+            if(self.x > goalx):
+                self.setLocation(self.x - 1, self.y)
+                print("Car", self.ID, "moved left. New position:", self.getLocation(), "Current goal charger node:", node.getID())
+            if(self.x < goalx):
+                self.setLocation(self.x + 1, self.y)
+                print("Car", self.ID, "moved right. New position:", self.getLocation(), "Current goal charger node:", node.getID())
+                
+        elif (abs(self.x - goalx) < abs(self.y - goaly)):
+            #Move in y dimension, further to go
+            if(self.y > goaly):
+                self.setLocation(self.x, self.y - 1)
+                print("Car", self.ID, "moved down. New position:", self.getLocation(), "Current goal charger node:", node.getID())
+            if(self.y < goaly):
+                self.setLocation(self.x, self.y + 1)
+                print("Car", self.ID, "moved up. New position:", self.getLocation(), "Current goal charger node:", node.getID())
+                
+        elif (abs(self.x - goalx) == abs(self.y - goaly)):
+            #Even distance, move x
+            if(self.x > goalx):
+                self.setLocation(self.x - 1, self.y)
+                print("Car", self.ID, "moved left. New position:", self.getLocation(), "Current goal charger node:", node.getID())
+            if(self.x < goalx):
+                self.setLocation(self.x + 1, self.y)
+                print("Car", self.ID, "moved right. New position:", self.getLocation(), "Current goal charger node:", node.getID())
+                
+        if (self.x == goalx) & (self.y == goaly):
+            #Now at node
+            self.state = 0
+            print("Car", self.ID, "is now at Charger", node.getID()+".")
+            node.addCar(self)
+            return True
+            
     def moveTowardPoint(self, goalx, goaly):
         if (self.x == goalx) & (self.y == goaly):
             #Now at node
             self.state = 1
             print("Car", self.ID, "idling at", str(goalx)+",", str(goaly)+".")
+            return False
             
         if (abs(self.x - goalx) > abs(self.y - goaly)):
             #Move in x dimension, further to go
