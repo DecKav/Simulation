@@ -70,6 +70,7 @@ class Simulator:
                     self.nodes[node].removeCar(car)
                     car.state = 2
                     car.currentNode = car.progressTask()
+        
                     
         ##Tasks waiting, no tasks waiting
         ##Fleet threshold, individual threshold
