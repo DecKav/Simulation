@@ -9,6 +9,8 @@ from Node import Node, Goods, Charger, Picker
 from Task import Task
 from Car import Car
 from collections import OrderedDict
+import math
+
 
 class Simulator:
     """ Controls all nodes, links, and cars. Advances time, manages job list.
@@ -27,6 +29,15 @@ class Simulator:
         self.time = 0
         self.taskCount = 0
         self.totalEnergy = 0;
+        self.moveCost = -10
+        self.idleCost = -5
+        self.nodeCost = -5
+        self.chargeCost = 10
+        self.taskEnergy = 0
+        self.totalCost = 0
+        
+        root = Node(0,0)
+        self.nodes[root.getID()] = root
 
     def addNode(self, x, y):
         nodeAdd = Node(x,y)
@@ -57,7 +68,23 @@ class Simulator:
         print("======")
         
         self.totalEnergy = 0
+        self.totalCost = 0
         
+        #Iterate through tasks to establish current waiting cost
+        for task in self.tasks:
+            prevNode = "00"
+            for node in self.tasks[task].nodes:
+                currentNode = node
+                x1 = self.nodes[currentNode].getPos()[0]
+                x2 = self.nodes[prevNode].getPos()[0]
+                y1 = self.nodes[currentNode].getPos()[1]
+                y2 = self.nodes[prevNode].getPos()[1]
+                distance = abs(round(math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)), 0))
+                nodeTimeCost = self.tasks[task].nodes[node]*self.nodeCost*-1
+                moveTimeCost = distance*self.moveCost*-1
+                self.totalCost = self.totalCost + nodeTimeCost + moveTimeCost
+                prevNode = currentNode
+            
         #Iterate through idling cars
         for car in self.cars:
             self.totalEnergy = self.totalEnergy + self.cars[car].getCharge()
@@ -68,6 +95,8 @@ class Simulator:
                     #Individual and Fleet threshold
                     self.cars[car].state = 0
                     print("Car", self.cars[car].getID(), "is now moving to be charged.")
+                else:
+                    self.cars[car].state = 1
         
         #Iterate through all node queues
         totalClear = []
@@ -96,18 +125,21 @@ class Simulator:
             if currentCar not in totalClear:
                 if currentCar.state == 0: # If car state is 'charging'
                     if(currentCar.moveTowardCharge(self.chargers["22"])==True):
-                        currentCar.changeCharge(10)
+                        currentCar.changeCharge(self.chargeCost)
+                    else:
+                        currentCar.changeCharge(self.moveCost)
                 elif currentCar.state == 1: # If car state is 'idling'
                     if(currentCar.moveTowardPoint(0, 0)==False):
-                        currentCar.changeCharge(-5)
+                        currentCar.changeCharge(self.idleCost)
                     else:
-                        currentCar.changeCharge(-10)                    
+                        currentCar.changeCharge(self.moveCost)                    
                 elif currentCar.state == 2: # If car state is 'moving'
                     currentCar.moveToward(self.nodes[currentCar.getCurrentNodeID()])
-                    currentCar.changeCharge(-10)
+                    currentCar.changeCharge(self.moveCost)
                 elif currentCar.state == 3: # If car state is 'at node'
-                    currentCar.changeCharge(-5)
+                    currentCar.changeCharge(self.nodeCost)
             print("Car "+str(currentCar.getID())+" Charge: "+str(currentCar.getCharge())+"%")
+            
             
         ##Change in energy
         print("======")
@@ -121,6 +153,9 @@ class Simulator:
         print("Energy Change in this step:", str(deltaE))
         
         self.totalEnergy = delta
+        
+        print("======")
+        print("Current Job Queue Cost: "+str(self.totalCost))
                
         
         
