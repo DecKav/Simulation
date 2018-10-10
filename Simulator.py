@@ -27,7 +27,6 @@ class Simulator:
         self.cars = {}
         self.tasks = OrderedDict()
         self.time = 0
-        self.taskCount = 0
         self.totalEnergy = 0;
         self.moveCost = -10
         self.idleCost = -5
@@ -54,13 +53,14 @@ class Simulator:
         self.cars[carAdd.getID()] = carAdd
         print("Car", carAdd.getID(), "created.")
 
-    def addTask(self, nodes):
-        self.taskCount = self.taskCount + 1
-        ID = self.taskCount
-        taskAdd = Task(ID, nodes)
-        self.tasks[taskAdd.getID()] = taskAdd
-        print("Job number", taskAdd.getID(), "created.")
-                
+    def addTask(self, time, nodes):
+        taskAdd = Task(time, nodes)
+        self.tasks[taskAdd.getTime()] = taskAdd
+        print("Job at time step", taskAdd.getTime(), "created.")
+        
+    def addTaskSet(self, tasks):
+        for time, task in tasks.items():
+            pass                
 
     def timeStep(self):
         self.time = self.time + 1
@@ -71,26 +71,30 @@ class Simulator:
         self.totalCost = 0
         
         #Iterate through tasks to establish current waiting cost
-        for task in self.tasks:
-            prevNode = "00"
-            for node in self.tasks[task].nodes:
-                currentNode = node
-                x1 = self.nodes[currentNode].getPos()[0]
-                x2 = self.nodes[prevNode].getPos()[0]
-                y1 = self.nodes[currentNode].getPos()[1]
-                y2 = self.nodes[prevNode].getPos()[1]
-                distance = abs(round(math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)), 0))
-                nodeTimeCost = self.tasks[task].nodes[node]*self.nodeCost*-1
-                moveTimeCost = distance*self.moveCost*-1
-                self.totalCost = self.totalCost + nodeTimeCost + moveTimeCost
-                prevNode = currentNode
+        for time, task in self.tasks.items():
+            if(time <= self.time):
+                prevNode = "00"
+                for node in task.nodes:
+                    currentNode = node
+                    x1 = self.nodes[currentNode].getPos()[0]
+                    x2 = self.nodes[prevNode].getPos()[0]
+                    y1 = self.nodes[currentNode].getPos()[1]
+                    y2 = self.nodes[prevNode].getPos()[1]
+                    distance = abs(round(math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)), 0))
+                    nodeTimeCost = task.nodes[node]*self.nodeCost*-1
+                    moveTimeCost = distance*self.moveCost*-1
+                    self.totalCost = self.totalCost + nodeTimeCost + moveTimeCost
+                    prevNode = currentNode
             
         #Iterate through idling cars
         for car in self.cars:
             self.totalEnergy = self.totalEnergy + self.cars[car].getCharge()
             if self.cars[car].state == 1:
                 if (self.tasks) and (self.cars[car].getCharge() > 25):
-                    self.cars[car].addTask(self.tasks.popitem(False)[1])
+                    for key in self.tasks:
+                        if(key <= self.time):
+                            self.cars[car].addTask(self.tasks.pop(key))
+                            break
                 elif (self.cars[car].getCharge() < 50):
                     #Individual and Fleet threshold
                     self.cars[car].state = 0

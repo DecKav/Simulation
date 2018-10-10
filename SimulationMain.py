@@ -29,12 +29,12 @@ if __name__ == "__main__":
     taskNodes1["11"] = 2
     taskNodes1["21"] = 3
     taskNodes1["12"] = 2
-    sim.addTask(taskNodes1)
+    sim.addTask(1, taskNodes1)
     taskNodes2 = OrderedDict()
     taskNodes2["21"] = 1
     taskNodes2["12"] = 1
     taskNodes2["11"] = 1
-    sim.addTask(taskNodes2)
+    sim.addTask(5, taskNodes2)
     
 #    sim = Simulator()
 #    

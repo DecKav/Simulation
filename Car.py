@@ -58,7 +58,7 @@ class Car:
         self.task = task
         self.currentNodeID, self.currentNodeTime = task.nodes.popitem(False) #Gives ID, time
         self.state = 2
-        print("Car", self.getID(), "has received Task", str(self.task.getID())+".")
+        print("Car", self.getID(), "has received Task", str(self.task.getTime())+".")
     
     def clearTask(self):
         self.task = None
@@ -72,7 +72,7 @@ class Car:
         if self.task.nodes:
             self.currentNodeID, self.currentNodeTime = self.task.nodes.popitem(False)
         else: 
-            print("Car", self.getID(), "has finished Task", str(self.task.getID())+".")
+            print("Car", self.getID(), "has finished Task", str(self.task.getTime())+".")
             self.clearTask()
     
     def validPoint(self, x, y):
