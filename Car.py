@@ -48,6 +48,7 @@ class Car:
         if((self.charge + change) > 100):
             self.charge = 100
             print("Car", self.getID(), "is now at full charge.")
+            self.state = 1
         else:
             self.charge = self.charge + change;
             print("Car", self.getID(), "is now at "+str(self.charge)+"%", "charge.")

@@ -5,6 +5,8 @@ Created on Tue Sep  4 18:52:32 2018
 @author: Declan Kavanagh
 """
 
+import math
+
 class Node:
     """ Represents a node in a warehouse that cars need to move between.
     Attributes:
@@ -65,9 +67,9 @@ class Charger(Node):
     """
     def __init__(self, x, y):
         Node.__init__(self, x, y)
-        self.rate = 10;
+        self.rate = 4;
     
     def addCar(self, Car):
-        self.queue[Car] = (100 - Car.getCharge())/self.rate
+        self.queue[Car] = round((100 - Car.getCharge())/self.rate)
         print("Car", Car.getID(), "added to Charger", self.ID+". Requires "+str(self.queue[Car])+" time steps.")
     

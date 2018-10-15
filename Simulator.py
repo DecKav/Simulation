@@ -27,14 +27,13 @@ class Simulator:
         self.cars = {}
         self.tasks = OrderedDict()
         self.time = 0
-        self.totalEnergy = 0;
-        self.moveCost = -10
-        self.idleCost = -5
-        self.nodeCost = -5
-        self.chargeCost = 10
+        self.totalEnergy = 0
+        self.moveCost = -5
+        self.idleCost = -3
+        self.nodeCost = -3
+        self.chargeCost = 2
         self.taskEnergy = 0
         self.totalCost = 0
-        
         root = Node(0,0)
         self.nodes[root.getID()] = root
 
@@ -62,13 +61,17 @@ class Simulator:
         for time, task in tasks.items():
             pass                
 
-    def timeStep(self):
+    def timeStep(self, thresh1, thresh2):
         self.time = self.time + 1
         print("Step Number:", self.time)   
         print("======")
         
         self.totalEnergy = 0
         self.totalCost = 0
+        
+        """
+        
+        """
         
         #Iterate through tasks to establish current waiting cost
         for time, task in self.tasks.items():
@@ -90,12 +93,12 @@ class Simulator:
         for car in self.cars:
             self.totalEnergy = self.totalEnergy + self.cars[car].getCharge()
             if self.cars[car].state == 1:
-                if (self.tasks) and (self.cars[car].getCharge() > 25):
+                if (self.tasks) and (self.cars[car].getCharge() > thresh1):
                     for key in self.tasks:
                         if(key <= self.time):
                             self.cars[car].addTask(self.tasks.pop(key))
                             break
-                elif (self.cars[car].getCharge() < 50):
+                elif (self.cars[car].getCharge() < thresh2):
                     #Individual and Fleet threshold
                     self.cars[car].state = 0
                     print("Car", self.cars[car].getID(), "is now moving to be charged.")
@@ -128,7 +131,7 @@ class Simulator:
             currentCar = self.cars[car]
             if currentCar not in totalClear:
                 if currentCar.state == 0: # If car state is 'charging'
-                    if(currentCar.moveTowardCharge(self.chargers["22"])==True):
+                    if(currentCar.moveTowardCharge(self.chargers["13"])==True):
                         currentCar.changeCharge(self.chargeCost)
                     else:
                         currentCar.changeCharge(self.moveCost)
@@ -164,3 +167,17 @@ class Simulator:
         
         
         print("\n")
+        
+        for car in self.cars:
+            currentCar = self.cars[car]
+            if currentCar.state == 2:
+                return False
+            if currentCar.state == 3:
+                return False
+        
+        if not self.tasks:
+            print("TERMINATE")
+            print(self.tasks.items)
+            return True
+        
+        return False
