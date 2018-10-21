@@ -50,6 +50,7 @@ class Simulator:
     def addCar(self, ID):
         carAdd = Car(ID)
         self.cars[carAdd.getID()] = carAdd
+        self.totalEnergy = self.totalEnergy + carAdd.getCharge()
         print("Car", carAdd.getID(), "created.")
 
     def addTask(self, time, nodes):
@@ -70,7 +71,8 @@ class Simulator:
         self.totalCost = 0
         
         """
-        
+        1. Demand or Incoming Demand > or < Fleet battery
+        2. Demand or Incoming Demand > or < Indif
         """
         
         #Iterate through tasks to establish current waiting cost
@@ -177,7 +179,6 @@ class Simulator:
         
         if not self.tasks:
             print("TERMINATE")
-            print(self.tasks.items)
             return True
         
         return False
