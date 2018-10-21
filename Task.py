@@ -13,11 +13,15 @@ class Task:
         Task ID
         Node list
     """
-    def __init__(self, time, nodes):
+    def __init__(self, ID, time, nodes):
+        self.ID = ID
         self.time = time
         self.nodes = OrderedDict(nodes)
         self.cost = 0
         
-
+    def getID(self):
+        return self.ID
+    
     def getTime(self):
         return self.time
+    

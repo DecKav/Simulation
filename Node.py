@@ -33,6 +33,7 @@ class Node:
 
     def getPos(self):
         return self.x, self.y
+    
 
 
 
@@ -67,7 +68,7 @@ class Charger(Node):
     """
     def __init__(self, x, y):
         Node.__init__(self, x, y)
-        self.rate = 4;
+        self.rate = 20;
     
     def addCar(self, Car):
         self.queue[Car] = round((100 - Car.getCharge())/self.rate)

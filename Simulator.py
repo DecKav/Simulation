@@ -10,7 +10,7 @@ from Task import Task
 from Car import Car
 from collections import OrderedDict
 import math
-
+import sys
 
 class Simulator:
     """ Controls all nodes, links, and cars. Advances time, manages job list.
@@ -29,13 +29,15 @@ class Simulator:
         self.time = 0
         self.totalEnergy = 0
         self.moveCost = -5
-        self.idleCost = -3
-        self.nodeCost = -3
-        self.chargeCost = 2
+        self.idleCost = -5
+        self.nodeCost = -5
+        self.chargeCost = 10
         self.taskEnergy = 0
         self.totalCost = 0
         root = Node(0,0)
         self.nodes[root.getID()] = root
+        self.futureCost = 0
+        self.totalTasks = 0
 
     def addNode(self, x, y):
         nodeAdd = Node(x,y)
@@ -53,15 +55,16 @@ class Simulator:
         self.totalEnergy = self.totalEnergy + carAdd.getCharge()
         print("Car", carAdd.getID(), "created.")
 
-    def addTask(self, time, nodes):
-        taskAdd = Task(time, nodes)
-        self.tasks[taskAdd.getTime()] = taskAdd
+    def addTask(self, ID, time, nodes):
+        taskAdd = Task(ID, time, nodes)
+        self.tasks[self.totalTasks] = taskAdd
+        self.totalTasks = self.totalTasks + 1
         print("Job at time step", taskAdd.getTime(), "created.")
         
     def addTaskSet(self, tasks):
         for time, task in tasks.items():
             pass                
-
+    
     def timeStep(self, thresh1, thresh2):
         self.time = self.time + 1
         print("Step Number:", self.time)   
@@ -69,15 +72,11 @@ class Simulator:
         
         self.totalEnergy = 0
         self.totalCost = 0
+        self.futureCost = 0
         
-        """
-        1. Demand or Incoming Demand > or < Fleet battery
-        2. Demand or Incoming Demand > or < Indif
-        """
-        
-        #Iterate through tasks to establish current waiting cost
-        for time, task in self.tasks.items():
-            if(time <= self.time):
+        #Iterate through tasks to establish current waiting cost and horizon cost
+        for ID, task in self.tasks.items():
+            if(task.getTime() <= self.time):
                 prevNode = "00"
                 for node in task.nodes:
                     currentNode = node
@@ -90,22 +89,50 @@ class Simulator:
                     moveTimeCost = distance*self.moveCost*-1
                     self.totalCost = self.totalCost + nodeTimeCost + moveTimeCost
                     prevNode = currentNode
-            
+                    
+            if(task.getTime() <= self.time + 6) and (task.getTime() > self.time):
+                prevNode = "00"
+                for node in task.nodes:
+                    currentNode = node
+                    x1 = self.nodes[currentNode].getPos()[0]
+                    x2 = self.nodes[prevNode].getPos()[0]
+                    y1 = self.nodes[currentNode].getPos()[1]
+                    y2 = self.nodes[prevNode].getPos()[1]
+                    distance = abs(round(math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)), 0))
+                    nodeTimeCost = task.nodes[node]*self.nodeCost*-1
+                    moveTimeCost = distance*self.moveCost*-1
+                    self.futureCost = self.futureCost + nodeTimeCost + moveTimeCost
+                    prevNode = currentNode
+        
+        
+        
         #Iterate through idling cars
         for car in self.cars:
+            if self.cars[car].getCharge() < 0:
+                sys.exit("Car completely drained.")
             self.totalEnergy = self.totalEnergy + self.cars[car].getCharge()
             if self.cars[car].state == 1:
-                if (self.tasks) and (self.cars[car].getCharge() > thresh1):
-                    for key in self.tasks:
-                        if(key <= self.time):
-                            self.cars[car].addTask(self.tasks.pop(key))
+                """ This is basic control - 47 Time Steps
+                if (self.tasks) and (self.cars[car].getCharge() > 35):
+                    for ID, task in self.tasks.items():
+                        if(task.getTime() <= self.time):
+                            self.cars[car].addTask(self.tasks.pop(ID))
                             break
-                elif (self.cars[car].getCharge() < thresh2):
-                    #Individual and Fleet threshold
+                """
+                if (self.tasks):
+                    if (self.futureCost > self.totalCost):
+                        self.cars[car].state = 0
+                    else:
+                        for ID, task in self.tasks.items():
+                            if(task.getTime() <= self.time):
+                                self.cars[car].addTask(self.tasks.pop(ID))
+                                break
+                elif (self.cars[car].getCharge() < 20):
                     self.cars[car].state = 0
                     print("Car", self.cars[car].getID(), "is now moving to be charged.")
                 else:
                     self.cars[car].state = 1
+               
         
         #Iterate through all node queues
         totalClear = []
@@ -133,15 +160,13 @@ class Simulator:
             currentCar = self.cars[car]
             if currentCar not in totalClear:
                 if currentCar.state == 0: # If car state is 'charging'
-                    if(currentCar.moveTowardCharge(self.chargers["13"])==True):
+                    if(currentCar.moveTowardCharge(self.chargers["10"])==True):
                         currentCar.changeCharge(self.chargeCost)
                     else:
                         currentCar.changeCharge(self.moveCost)
                 elif currentCar.state == 1: # If car state is 'idling'
-                    if(currentCar.moveTowardPoint(0, 0)==False):
-                        currentCar.changeCharge(self.idleCost)
-                    else:
-                        currentCar.changeCharge(self.moveCost)                    
+                    currentCar.changeCharge(self.idleCost)
+                    print("Car", currentCar.getID(), "idling at", str(currentCar.getLocation())+".")
                 elif currentCar.state == 2: # If car state is 'moving'
                     currentCar.moveToward(self.nodes[currentCar.getCurrentNodeID()])
                     currentCar.changeCharge(self.moveCost)
@@ -158,13 +183,14 @@ class Simulator:
         
         deltaE = delta - self.totalEnergy 
         print("Total Energy at start:", str(self.totalEnergy))
-        print("Average Energy at start:", str(self.totalEnergy/len(self.cars)))
+#        print("Average Energy at start:", str(self.totalEnergy/len(self.cars)))
         print("Energy Change in this step:", str(deltaE))
         
         self.totalEnergy = delta
         
         print("======")
         print("Current Job Queue Cost: "+str(self.totalCost))
+        print("Horizon Job Cost: "+str(self.futureCost))
                
         
         
