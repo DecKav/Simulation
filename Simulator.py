@@ -5,7 +5,7 @@ Created on Tue Sep  4 18:51:18 2018
 @author: Declan Kavanagh
 """
 
-from Node import Node, Goods, Charger, Picker
+from Node import Node, Charger
 from Task import Task
 from Car import Car
 from collections import OrderedDict
@@ -38,6 +38,11 @@ class Simulator:
         self.nodes[root.getID()] = root
         self.futureCost = 0
         self.totalTasks = 0
+        self.horiz1 = 0
+        self.horiz2 = 0
+        self.output = []
+        w, h = 10, 50;
+        self.positions = [[0 for x in range(w)] for y in range(h)] 
 
     def addNode(self, x, y):
         nodeAdd = Node(x,y)
@@ -73,6 +78,9 @@ class Simulator:
         self.totalEnergy = 0
         self.totalCost = 0
         self.futureCost = 0
+        self.horiz1 = 0
+        self.horiz2 = 0
+        
         
         #Iterate through tasks to establish current waiting cost and horizon cost
         for ID, task in self.tasks.items():
@@ -103,11 +111,43 @@ class Simulator:
                     moveTimeCost = distance*self.moveCost*-1
                     self.futureCost = self.futureCost + nodeTimeCost + moveTimeCost
                     prevNode = currentNode
-        
+                    
+            if(task.getTime() <= self.time + 3) and (task.getTime() > self.time):
+                prevNode = "00"
+                for node in task.nodes:
+                    currentNode = node
+                    x1 = self.nodes[currentNode].getPos()[0]
+                    x2 = self.nodes[prevNode].getPos()[0]
+                    y1 = self.nodes[currentNode].getPos()[1]
+                    y2 = self.nodes[prevNode].getPos()[1]
+                    distance = abs(round(math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)), 0))
+                    nodeTimeCost = task.nodes[node]*self.nodeCost*-1
+                    moveTimeCost = distance*self.moveCost*-1
+                    self.horiz1 = self.horiz1 + nodeTimeCost + moveTimeCost
+                    prevNode = currentNode
+                    
+            if(task.getTime() <= self.time + 6) and (task.getTime() > self.time + 3):
+                
+                prevNode = "00"
+                for node in task.nodes:
+                    currentNode = node
+                    x1 = self.nodes[currentNode].getPos()[0]
+                    x2 = self.nodes[prevNode].getPos()[0]
+                    y1 = self.nodes[currentNode].getPos()[1]
+                    y2 = self.nodes[prevNode].getPos()[1]
+                    distance = abs(round(math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)), 0))
+                    nodeTimeCost = task.nodes[node]*self.nodeCost*-1
+                    moveTimeCost = distance*self.moveCost*-1
+                    self.horiz2 = self.horiz2 + nodeTimeCost + moveTimeCost
+                    prevNode = currentNode
         
         
         #Iterate through idling cars
+        i = 0
         for car in self.cars:
+            self.positions[self.time][i] = self.cars[car].getLocation()[0]
+            self.positions[self.time][i+1] = self.cars[car].getLocation()[1]
+            i = i + 2
             if self.cars[car].getCharge() < 0:
                 sys.exit("Car completely drained.")
             self.totalEnergy = self.totalEnergy + self.cars[car].getCharge()
@@ -119,8 +159,18 @@ class Simulator:
                             self.cars[car].addTask(self.tasks.pop(ID))
                             break
                 """
+                """ This is basic horizon control - 38 Time Steps
                 if (self.tasks):
                     if (self.futureCost > self.totalCost):
+                        self.cars[car].state = 0
+                    else:
+                        for ID, task in self.tasks.items():
+                            if(task.getTime() <= self.time):
+                                self.cars[car].addTask(self.tasks.pop(ID))
+                                break
+                """
+                if (self.tasks):
+                    if (self.horiz1 < self.horiz2):
                         self.cars[car].state = 0
                     else:
                         for ID, task in self.tasks.items():
@@ -190,7 +240,9 @@ class Simulator:
         
         print("======")
         print("Current Job Queue Cost: "+str(self.totalCost))
-        print("Horizon Job Cost: "+str(self.futureCost))
+        print("Total Horizon Job Cost: "+str(self.futureCost))
+        print("Horizon 1 hr Job Cost: "+str(self.horiz1))
+        print("Horizon 2 hr Job Cost: "+str(self.horiz2))
                
         
         

@@ -15,6 +15,7 @@ Energy cost of jobs
 
 from collections import OrderedDict
 from Simulator import Simulator
+import csv
 
 def setup():
     print("=======================")
@@ -108,6 +109,10 @@ def optimise():
     
     while(finish == False):
         finish = simulator.timeStep(thresh1, thresh2)
+    
+    with open('animation_steps.csv', mode='w') as animation_steps:
+        animation_writer = csv.writer(animation_steps, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        animation_writer.writerows(simulator.positions)
         
     first = simulator.time
     
