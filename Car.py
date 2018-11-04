@@ -21,6 +21,9 @@ class Car:
             3 = At goods/picking node
     """
     def __init__(self, ID):
+        """ Construct the car object with required attributes,
+        full charge initially. 
+        """
         self.ID = ID
         self.state = 1
         self.task = None
@@ -30,22 +33,35 @@ class Car:
         self.charge = 100;
         
     def getID(self):
+        """ Return ID.
+        """
         return self.ID
 
     def getLocation(self):
+        """ Return location.
+        """
         return self.x, self.y
     
     def getCurrentNodeID(self):
+        """ Return current node location. 
+        """
         return self.currentNodeID
     
     def getCurrentNodeTime(self):
+        """ Return time required at current node.
+        """
         return self.currentNodeTime
     
     def getCharge(self):
+        """ Return charge level.
+        """
         return self.charge
     
     def changeCharge(self, change):
+        """ Update car charge based on charging or working.
+        """
         if((self.charge + change) > 100):
+            #Cannot exceed 100%.
             self.charge = 100
             print("Car", self.getID(), "is now at full charge.")
             self.state = 1
@@ -55,6 +71,8 @@ class Car:
         return self.charge
 
     def addTask(self, task):
+        """ Assign an existing task to a car.
+        """
         self.taskStep = 0
         self.task = task
         self.currentNodeID, self.currentNodeTime = task.nodes.popitem(False) #Gives ID, time
@@ -62,14 +80,20 @@ class Car:
         print("Car", self.getID(), "has received Task", str(self.task.getTime())+".")
     
     def clearTask(self):
+        """ Task is completed, clear it and set to idle.
+        """
         self.task = None
         self.state = 1
     
     def setLocation(self, xNew, yNew):
+        """ Update position of the car.
+        """
         self.x = xNew
         self.y = yNew
     
     def progressTask(self):
+        """ Car has finished at a node, so progress task and update node destination.
+        """
         if self.task.nodes:
             self.currentNodeID, self.currentNodeTime = self.task.nodes.popitem(False)
         else: 
@@ -77,9 +101,13 @@ class Car:
             self.clearTask()
     
     def validPoint(self, x, y):
+        """ Add collision checking here!
+        """
         pass
     
     def moveToward(self, node):
+        """ Move car towards goal node.
+        """
         goalx, goaly = node.getPos()
         if (abs(self.x - goalx) > abs(self.y - goaly)):
             #Move in x dimension, further to go
@@ -115,6 +143,8 @@ class Car:
             node.addCar(self)
             
     def moveTowardCharge(self, node):
+        """ Move toward charger node.
+        """
         goalx, goaly = node.getPos()
         if (self.x == goalx) & (self.y == goaly):
             self.state = 0
@@ -155,6 +185,8 @@ class Car:
             return True
             
     def moveTowardPoint(self, goalx, goaly):
+        """ Move toward manual point. 
+        """
         if (self.x == goalx) & (self.y == goaly):
             #Now at node
             self.state = 1

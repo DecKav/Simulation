@@ -4,26 +4,22 @@ A simulation for an intelligent warehouse, using cars, nodes, and a parent simul
 
 
 @author: Declan Kavanagh
-@author: Sam Bloom
 
 """
-
-"""
-Energy cost of jobs
-"""
-
 
 from collections import OrderedDict
 from Simulator import Simulator
 import csv
 
+
 def setup():
+    """ Establishes a Simulator, Nodes, Cars, and Tasks.
+    Used to quickly alter how the simulation is set up.
+    """
     print("=======================")
     sim = Simulator()
     sim.addNode(0, 0)
     sim.addNode(0, 1)
-#    sim.addNode(2, 1)
-#    sim.addNode(2, 2)
     sim.addCharger(1, 0)
     sim.addCar(1)
     sim.addCar(2)
@@ -78,37 +74,25 @@ def setup():
     addTasks(sim, 0, 37, taskNodes2)
     #End (Step 40)
     
-    
-    
     print("=======================")
     print("\n")
     return sim
 
 def addTasks(sim, number, time, nodes):
+    """ Method for fast addition of multiple identical tasks at the same time step.
+    """
     for i in range(0,number):
         sim.addTask(i, time, nodes)
 
 def optimise():
-    """
-    Set initial guess (worst case with finite sol) thresholds for:
-        Send to charge if task available vs take task (Thresh1)
-        Send to charge if no task available vs send to idle (Thresh2)
-    While timestep == true
-        Simulate operation, count steps
-    Second guess thresholds
-    While timestep == true
-        Simulate operation, count steps
-    Based on time steps from guesses, new guess to converge on optimal solution
-    Return thresholds, time steps, and optimal solution
+    """Used to run the simulation, generate output file, and return time taken.
     """
     simulator = setup()
-    thresh1 = 40
-    thresh2 = 100
     
     finish = False
     
     while(finish == False):
-        finish = simulator.timeStep(thresh1, thresh2)
+        finish = simulator.timeStep()
     
     with open('animation_steps.csv', mode='w') as animation_steps:
         animation_writer = csv.writer(animation_steps, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -119,16 +103,7 @@ def optimise():
     return first
     
 def lookAhead(window):
-    """
-    For next x time steps, calculate:
-        Job Cost = Pending cost + New Cost this step - Cost completed(#cars (u1))
-        Charge = Total Charge + Car Charge Gained - Car Charge lost Working(#cars (u2))
-    
-    Transition cost of distance*move cost
-    
-    Optimise wrt u1, u2 given New cost this step disturbance
-    
-    
+    """Returns charge and jobs in the specified window steps ahead.
     """
     simulator = setup()
     cost = []

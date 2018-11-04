@@ -15,23 +15,33 @@ class Node:
         Queue (car times)
     """
     def __init__(self, x, y):
+        """ Construct the node with required attributes.
+        """
         self.ID = str(x)+str(y)
         self.x = x
         self.y = y
         self.queue = {}
 
     def addCar(self, Car):
+        """ Add a car to the node queue, with required time.
+        """
         self.queue[Car] = Car.getCurrentNodeTime()
         print("Car", Car.getID(), "added to Node", self.ID+".")
 
     def removeCar(self, Car):
+        """ Remove car from the node queue.
+        """
         del self.queue[Car]
         print("Car", Car.getID(), "removed from Node", self.ID+".")
 
     def getID(self):
+        """ Return ID.
+        """
         return self.ID
 
     def getPos(self):
+        """ Return position. 
+        """
         return self.x, self.y
     
 
@@ -45,6 +55,8 @@ class Goods(Node):
         Car Queue
     """
     def __init__(self, x, y):
+        """ Construct with super method.
+        """
         Node.__init__(self, x, y)
 
 
@@ -56,6 +68,8 @@ class Picker(Node):
         Car Queue
     """
     def __init__(self, x, y):
+        """ Construct with super method.
+        """
         Node.__init__(self, x, y)
 
 
@@ -67,10 +81,15 @@ class Charger(Node):
         Car Queue
     """
     def __init__(self, x, y):
+        """ Construct with super method, initialise charge rate.
+        """
         Node.__init__(self, x, y)
         self.rate = 20;
     
     def addCar(self, Car):
+        """ Overwrite super method, begins car charging and calculates queue
+        based on current charge level of AGV.
+        """
         self.queue[Car] = round((100 - Car.getCharge())/self.rate)
         print("Car", Car.getID(), "added to Charger", self.ID+". Requires "+str(self.queue[Car])+" time steps.")
     
